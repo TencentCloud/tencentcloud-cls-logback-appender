@@ -9,9 +9,9 @@ logback是由log4j创始人设计的又一个开源日志组件。通过使用Lo
 
 ```
 <dependency>
-    <groupId>com.tencentcloud.cls</groupId>
+    <groupId>com.tencentcloudapi.cls</groupId>
     <artifactId>tencentcloud-cls-logback-appender</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
