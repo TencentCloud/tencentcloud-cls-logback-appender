@@ -7,6 +7,7 @@ import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import ch.qos.logback.core.encoder.Encoder;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.tencentcloudapi.cls.producer.AsyncProducerClient;
 import com.tencentcloudapi.cls.producer.AsyncProducerConfig;
 import com.tencentcloudapi.cls.producer.Result;
@@ -17,10 +18,8 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 /**
  * @author farmerx
@@ -51,11 +50,15 @@ public class LoghubAppender<E> extends UnsynchronizedAppenderBase<E> {
 
     private AsyncProducerConfig producerConfig;
 
+    private CustomFieldsJsonProvider customFieldsJsonProvider = new CustomFieldsJsonProvider();
+
     private DateTimeFormatter formatter;
 
     protected Encoder<E> encoder;
 
     private String mdcFields;
+
+    private String customFields;
 
     public String getEndpoint() {
         return endpoint;
@@ -214,6 +217,10 @@ public class LoghubAppender<E> extends UnsynchronizedAppenderBase<E> {
         this.mdcFields = mdcFields;
     }
 
+    public void setCustomFields(String customFields) {
+        this.customFields = customFields;
+    }
+
     private final LoghubAppenderCallback<E> loghubAppenderCallback = new LoghubAppenderCallback<E>() {
         @Override
         public void onCompletion(Result result) {
@@ -229,6 +236,8 @@ public class LoghubAppender<E> extends UnsynchronizedAppenderBase<E> {
     @Override
     public void start() {
         try {
+            customFieldsJsonProvider.setCustomFields(this.customFields);
+            customFieldsJsonProvider.initializeCustomFields();
             formatter = DateTimeFormat.forPattern(timeFormat).withZone(DateTimeZone.forID(timeZone));
             if (source==null || source.isEmpty()) {
                 source = NetworkUtils.getLocalMachineIP();
@@ -310,6 +319,14 @@ public class LoghubAppender<E> extends UnsynchronizedAppenderBase<E> {
                         .filter(v-> Arrays.stream(f.split(",")).anyMatch(i->i.equals(v.getKey())))
                         .forEach(map-> item.PushBack(map.getKey(),map.getValue()))
         );
+
+        if (customFieldsJsonProvider.getCustomFieldsNode() != null) {
+            for (Iterator<Map.Entry<String, JsonNode>> fields = customFieldsJsonProvider.getCustomFieldsNode().fields();
+                 fields.hasNext();) {
+                Map.Entry<String, JsonNode> field = fields.next();
+                item.PushBack(field.getKey(), field.getValue().asText());
+            }
+        }
         try {
             List<LogItem> logItems = new ArrayList<>();
             logItems.add(item);

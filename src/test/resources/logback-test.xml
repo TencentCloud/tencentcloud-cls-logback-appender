@@ -6,8 +6,8 @@
         <!--必选项-->
         <!-- 账号及网络配置 -->
         <endpoint>ap-guangzhou.cls.tencentcs.com</endpoint>
-        <accessKeyId>${accesskey}</accessKeyId>
-        <accessKeySecret>${accessKeySecret</accessKeySecret>
+        <accessKeyId>${accessKey}</accessKeyId>
+        <accessKeySecret>${accessKeySecret}</accessKeySecret>
         <topicId>${topicId}</topicId>
 
         <!-- 可选项 详见 '参数说明'-->
@@ -24,7 +24,7 @@
         <!-- 可选项 设置时间格式 -->
         <timeFormat>yyyy-MM-dd'T'HH:mm:ssZ</timeFormat>
         <timeZone>Asia/Shanghai</timeZone>
-
+        <customFields>{"app":"myApplication"}</customFields>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg</pattern>
         </encoder>
