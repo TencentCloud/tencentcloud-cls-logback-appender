@@ -18,7 +18,7 @@ logback是由log4j创始人设计的又一个开源日志组件。通过使用Lo
 - 修改logback配置文件
 
 ```
-  <appender name="LoghubAppender" class="com.tencentcloud.cls.LoghubAppender">
+  <appender name="LoghubAppender" class="com.tencentcloudapi.cls.LoghubAppender">
         <!--必选项-->
         <endpoint>ap-guangzhou.cls.tencentcs.com</endpoint>
         <accessKeyId>${accesskey}</accessKeyId>
