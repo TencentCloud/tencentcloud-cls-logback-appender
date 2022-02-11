@@ -301,6 +301,12 @@ public class LoghubAppender<E> extends UnsynchronizedAppenderBase<E> {
         }
 
         String message = event.getFormattedMessage();
+        if (message.length() > 1024*1024) {
+            addError("Failed to send log, message content exceed 1M, topicId=" + topicId
+                    + ", source=" + source
+                    + ", logItem=" + item, new Exception("message content exceed 1M"));
+            return;
+        }
         item.PushBack("message", message);
 
         IThrowableProxy iThrowableProxy = event.getThrowableProxy();
@@ -311,7 +317,14 @@ public class LoghubAppender<E> extends UnsynchronizedAppenderBase<E> {
         }
 
         if (this.encoder != null) {
-            item.PushBack("log", new String(this.encoder.encode(eventObject)));
+            String logMessage = new String(this.encoder.encode(eventObject));
+            if (logMessage.length() > 1024*1024) {
+                addError("Failed to send log, message content exceed 1M, topicId=" + topicId
+                        + ", source=" + source
+                        + ", logItem=" + item, new Exception("message content exceed 1M"));
+                return;
+            }
+            item.PushBack("log", logMessage);
         }
 
         Optional.ofNullable(mdcFields).ifPresent(
@@ -319,6 +332,7 @@ public class LoghubAppender<E> extends UnsynchronizedAppenderBase<E> {
                         .filter(v-> Arrays.stream(f.split(",")).anyMatch(i->i.equals(v.getKey())))
                         .forEach(map-> item.PushBack(map.getKey(),map.getValue()))
         );
+
 
         if (customFieldsJsonProvider.getCustomFieldsNode() != null) {
             for (Iterator<Map.Entry<String, JsonNode>> fields = customFieldsJsonProvider.getCustomFieldsNode().fields();
