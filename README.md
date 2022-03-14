@@ -22,7 +22,7 @@ logback是由log4j创始人设计的又一个开源日志组件。通过使用Lo
         <!--必选项-->
         <endpoint>ap-guangzhou.cls.tencentcs.com</endpoint>
         <accessKeyId>${accesskey}</accessKeyId>
-        <accessKeySecret>${accessKeySecret</accessKeySecret>
+        <accessKeySecret>${accessKeySecret}</accessKeySecret>
         <topicId>${topicId}</topicId>
 
         <!-- 可选项 详见 '参数说明'-->
