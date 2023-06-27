@@ -6,7 +6,7 @@
 
   <groupId>com.tencentcloudapi.cls</groupId>
   <artifactId>tencentcloud-cls-logback-appender</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 
   <name>tencentcloud-cls-logback-appender</name>
   <!-- FIXME change it to the project's website -->
@@ -47,6 +47,18 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <version>2.13.5</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.15</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
