@@ -49,6 +49,9 @@ logback是由log4j创始人设计的又一个开源日志组件。通过使用Lo
 
 ### Sample Code
 
+logback 简单配置[logback-test.xml](https://github.com/TencentCloud/tencentcloud-cls-logback-appender/blob/main/src/test/resources/logback-test.xml)
+
+
 
 ### 域名地址
 
