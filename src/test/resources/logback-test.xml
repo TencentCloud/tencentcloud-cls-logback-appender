@@ -45,8 +45,10 @@
     <!-- 解决debug模式下循环发送的问题 -->
     <logger name="org.apache.http.impl.conn.Wire" level="WARN" />
 
+    
     <root>
         <level value="WARN"/>
+         <!-- 生效插件配置 -->
         <appender-ref ref="LoghubAppender"/>
         <appender-ref ref="STDOUT"/>
     </root>
