@@ -283,10 +283,7 @@ public class LoghubAppender<E> extends UnsynchronizedAppenderBase<E> {
             return;
         }
         LoggingEvent event = (LoggingEvent) eventObject;
-
-        LogItem item = new LogItem();
-        item.SetTime((int) (event.getTimeStamp() / 1000));
-
+        LogItem item = new LogItem(event.getTimeStamp());
         if(formatter!=null){
             DateTime dateTime = new DateTime(event.getTimeStamp());
             item.PushBack("time", dateTime.toString(formatter));
