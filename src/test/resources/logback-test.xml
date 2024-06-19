@@ -28,6 +28,7 @@
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg</pattern>
         </encoder>
+        <!-- 可选项 多个字段可以设置为*-->
         <mdcFields>THREAD_ID,MDC_KEY</mdcFields>
     </appender>
 

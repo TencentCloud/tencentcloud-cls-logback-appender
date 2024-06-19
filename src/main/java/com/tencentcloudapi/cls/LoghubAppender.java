@@ -324,11 +324,34 @@ public class LoghubAppender<E> extends UnsynchronizedAppenderBase<E> {
             item.PushBack("log", logMessage);
         }
 
-        Optional.ofNullable(mdcFields).ifPresent(
-                f->event.getMDCPropertyMap().entrySet().stream()
-                        .filter(v-> Arrays.stream(f.split(",")).anyMatch(i->i.equals(v.getKey())))
-                        .forEach(map-> item.PushBack(map.getKey(),map.getValue()))
-        );
+        try {
+            // "*" matches all fields, add all fields to item
+            if (mdcFields != null && mdcFields.trim().equals("*")) {
+                event.getMDCPropertyMap().entrySet().forEach(e -> {
+                    if (null != e.getValue() && null != e.getKey()) {
+                        item.PushBack(e.getKey(), e.getValue());
+                    }else {
+                        item.PushBack(e.getKey(), "");
+                    }
+                });
+            } else {
+                Optional.ofNullable(mdcFields).ifPresent(
+                        f -> event.getMDCPropertyMap().entrySet().stream()
+                                .filter(v -> Arrays.stream(f.split(",")).anyMatch(i -> i.equals(v.getKey())))
+                                .forEach(map -> {
+                                    if (null != map.getValue() && null != map.getKey()) {
+                                        item.PushBack(map.getKey(), map.getValue());
+                                    } else {
+                                        item.PushBack(map.getKey(), "");
+                                    }
+                                })
+                );
+            }
+        } catch (Exception e) {
+            addError("Failed to parse mdc field, topicId=" + topicId
+                    + ", source=" + source
+                    + " err message " + e.getMessage());
+        }
 
 
         if (customFieldsJsonProvider.getCustomFieldsNode() != null) {
