@@ -6,7 +6,7 @@
 
   <groupId>com.tencentcloudapi.cls</groupId>
   <artifactId>tencentcloud-cls-logback-appender</artifactId>
-  <version>1.0.7</version>
+  <version>1.0.8</version>
 
   <name>tencentcloud-cls-logback-appender</name>
   <!-- FIXME change it to the project's website -->

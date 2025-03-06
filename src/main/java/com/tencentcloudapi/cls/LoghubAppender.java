@@ -46,6 +46,10 @@ public class LoghubAppender<E> extends UnsynchronizedAppenderBase<E> {
     private String baseRetryBackoffMs;
     private String maxRetryBackoffMs;
 
+    private boolean includeLocation = true;
+
+    private boolean includeMessage = true;
+
     private AsyncProducerClient producer;
 
     private AsyncProducerConfig producerConfig;
@@ -221,6 +225,23 @@ public class LoghubAppender<E> extends UnsynchronizedAppenderBase<E> {
         this.customFields = customFields;
     }
 
+
+    public boolean getIncludeLocation() {
+        return this.includeLocation;
+    }
+
+    public void setIncludeLocation(boolean includeLocation) {
+        this.includeLocation = includeLocation;
+    }
+
+    public boolean getIncludeMessage() {
+        return this.includeMessage;
+    }
+
+    public void setIncludeMessage(boolean includeMessage) {
+        this.includeMessage = includeMessage;
+    }
+
     private final LoghubAppenderCallback<E> loghubAppenderCallback = new LoghubAppenderCallback<E>() {
         @Override
         public void onCompletion(Result result) {
@@ -292,19 +313,23 @@ public class LoghubAppender<E> extends UnsynchronizedAppenderBase<E> {
         item.PushBack("level", event.getLevel().toString());
         item.PushBack("thread", event.getThreadName());
 
-        StackTraceElement[] caller = event.getCallerData();
-        if (caller != null && caller.length > 0) {
-            item.PushBack("location", caller[0].toString());
+        if (this.includeLocation) {
+            StackTraceElement[] caller = event.getCallerData();
+            if (caller != null && caller.length > 0) {
+                item.PushBack("location", caller[0].toString());
+            }
         }
 
-        String message = event.getFormattedMessage();
-        if (message.length() > 1024*1024) {
-            addError("Failed to send log, message content exceed 1M, topicId=" + topicId
-                    + ", source=" + source
-                    + ", logItem=" + item, new Exception("message content exceed 1M"));
-            return;
+        if (this.encoder == null || this.includeMessage) {
+            String message = event.getFormattedMessage();
+            if (message.length() > 1024*1024) {
+                addError("Failed to send log, message content exceed 1M, topicId=" + topicId
+                        + ", source=" + source
+                        + ", logItem=" + item, new Exception("message content exceed 1M"));
+                return;
+            }
+            item.PushBack("message", message);
         }
-        item.PushBack("message", message);
 
         IThrowableProxy iThrowableProxy = event.getThrowableProxy();
         if (iThrowableProxy != null) {
